@@ -4,7 +4,7 @@
     @component   : xbLib
     @type        : clibrary
     @description : Основная библиотека
-    @revision    : [+__make.revision+]
+    @revision    : 2015-12-07 12:07:00
   */
 
   /* LIBRARY ~BEGIN */
@@ -212,12 +212,17 @@
       // Сканирование
       foreach ($P as $path) {
         $F = self::correctPath($path.$q);
-        if ($_ = glob($F)) foreach ($_ as $fn) {
+        if ($_ = glob($F)) foreach ($_ as $fn) if (is_file($fn)) {
           $nn = basename($fn);
-          if (!in_array($nn,$names) || !$replace) {
-            $ret[] = $fn;
-            if ($replace) $names[] = $nn;
-          }
+          if ($replace) {
+            if (in_array($nn,$names)) {
+              $i = array_search($nn,$names);
+              $ret[$i] = $fn;
+            } else {
+              $ret[]   = $fn;
+              $names[] = $nn;
+            }
+          } else { $ret[] = $fn; }
         }
       }
       // Очистка и возврат
@@ -364,6 +369,7 @@
       } else { return $_; }
     }
 
+    /* **************** ПРОЧЕЕ **************** */
     /* LIBRARY:FUNCTION
       @name        : maskedValue
       @description : Установка значения с маской
@@ -380,7 +386,6 @@
       return ($p & ~$m | $v & $m);
     }
 
-    /* **************** ПРОЧЕЕ **************** */
     /* LIBRARY:FUNCTION
       @name        : extractData
       @description : Извлечь метаданные

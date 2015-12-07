@@ -4,7 +4,7 @@
     @component   : xbLanguage
     @type        : clibrary
     @description : Библиотека функций для работы с локализацией
-    @revision    : [+__make.revision+]
+    @revision    : 2015-12-07 12:08:00
   */
 
   /* LIBRARY ~BEGIN */

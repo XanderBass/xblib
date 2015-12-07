@@ -4,7 +4,7 @@
     @component   : xbClass
     @type        : class
     @description : Базовый класс
-    @revision    : [+__make.revision+]
+    @revision    : 2015-12-07 12:06:00
   */
 
   /* CLASS ~BEGIN
@@ -17,16 +17,23 @@
    * @property-read string $GUID
    * @property-read array  $events
    * @property-read array  $methods
+   * @property-read object $owner
    *
    * @method bool onClassError()
    */
   class xbClass {
+    const functionName = '#^([[:alpha:]])(\w+)([[:alpha:]\d])$#si';
+
     protected $_debugTrace = array();
     protected $_events     = array();
     protected $_methods    = array();
+    protected $_owner      = null;
 
     /* CLASS:CONSTRUCTOR */
-    function __construct($owner=null) { $this->_debugTrace['starttime'] = microtime(true); }
+    function __construct($owner=null) {
+      $this->_debugTrace['starttime'] = microtime(true);
+      $this->_owner = $owner;
+    }
 
     /* CLASS:GET */
     function __get($n) {
@@ -110,12 +117,13 @@
       @param : bool
     */
     public function registerEvent($n,$f=null) {
-      if (!self::isFunctionName($n)) return (!$this->onClassError("event:invalid_name",$n));
-      if (!isset($this->_events[$n])) $this->_events[$n] = array();
-      if (is_callable($f,true)) {
-        $this->_events[$n][] = $f;
-        return true;
-      }
+      if (preg_match(self::functionName,$n)) {
+        if (!isset($this->_events[$n])) $this->_events[$n] = array();
+        if (is_callable($f,true)) {
+          $this->_events[$n][] = $f;
+          return true;
+        }
+      } else { return (!$this->onClassError("event:invalid_name",$n)); }
       return true;
     }
 
@@ -129,11 +137,12 @@
       @param : bool
     */
     public function registerMethod($n,$f=null) {
-      if (!self::isFunctionName($n)) return (!$this->onClassError("method:invalid_name",$n));
-      if (is_callable($f,true)) {
-        $this->_methods[$n] = $f;
-        return true;
-      }
+      if (preg_match(self::functionName,$n)) {
+        if (is_callable($f,true)) {
+          $this->_methods[$n] = $f;
+          return true;
+        }
+      } else { return (!$this->onClassError("method:invalid_name",$n)); }
       return false;
     }
 
@@ -151,19 +160,6 @@
       if (!isset($fargs[0])) return true;
       $n = array_shift($fargs);
       return $this->call_event($n,$fargs);
-    }
-
-    /* CLASS:STATIC
-      @name        : bool
-      @description : Получение булева значения
-
-      @param : $v | | value | | Значение
-
-      @return : boolean | Булево представление значения
-    */
-    public static function isFunctionName($n) {
-      if (preg_match('#^([[:alpha:]])(\w+)([[:alpha:]\d])$#si',$n)) return true;
-      return false;
     }
   }
   /* CLASS ~END */
