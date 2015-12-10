@@ -4,11 +4,11 @@
     @component   : xbClass
     @type        : class
     @description : Базовый класс
-    @revision    : 2015-12-07 12:06:00
+    @revision    : 2015-12-10 12:59:00
   */
 
   /* CLASS ~BEGIN
-    @string : Имя класса
+    @string : GUID класса
   */
 
   /**
@@ -80,7 +80,7 @@
       if (!is_array($this->_events[$e])) return true;
       $ret = true;
       foreach ($this->_events[$e] as $func) {
-        // Первентивная проверка возможности вызова хука
+        // Превентивная проверка возможности вызова хука
         $EX = false;
         if (is_array($func)) {
           $obj = $func[0];
@@ -90,11 +90,9 @@
         // Вызов хука
         if ($EX) {
           $res  = call_user_func_array($func,$args);
-          // Алгоритм преобразования соответствует алгоритму функции в xbLib
-          // Используется в обход для того, чтобы не было необходимости
-          // подгружать всю библиотеку
           $ret &= ((strval($res)=='true')||($res===true)||(intval($res)>0));
         }
+        if (!$ret) break;
       }
       return $ret;
     }

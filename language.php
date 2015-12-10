@@ -4,7 +4,7 @@
     @component   : xbLanguage
     @type        : clibrary
     @description : Библиотека функций для работы с локализацией
-    @revision    : 2015-12-07 12:08:00
+    @revision    : 2015-12-10 13:19:00
   */
 
   /* LIBRARY ~BEGIN */
@@ -85,7 +85,7 @@
     */
     public static function current($v=null) {
       self::all(); if (empty(self::$_all)) return false;
-
+      // Определяем язык по умолчанию
       if (is_null(self::$_now)) {
         self::accepted();
         self::$_now = empty(self::$_acc) ? self::$_def : self::$_acc[0];
@@ -96,12 +96,11 @@
         if (isset($_POST[self::$_key])) $_ = $_POST[self::$_key];
         if ((strlen($_) == 2)) self::$_now = $_;
       }
-
+      // Устанавливаем язык
       if (!is_null($v)) {
         if (!in_array($v,self::$_all)) return false;
         self::$_now = $v;
       }
-
       return self::$_now;
     }
 
@@ -117,12 +116,10 @@
         self::$_all = array();
         foreach (self::$_paths as $path) if (is_dir($path)) {
           $_ = scandir($path);
-          foreach ($_ as $_i) {
-            if (($_i != '.') && ($_i != '..')) {
-              if (strlen($_i) == 2) if (ctype_alnum($_i))
+          foreach ($_ as $_i)
+            if (($_i != '.') && ($_i != '..'))
+              if (strlen($_i) == 2 && ctype_alnum($_i))
                 if (!in_array($_i,self::$_all)) self::$_all[] = $_i;
-            }
-          }
         }
         if (!in_array(self::$_def,self::$_all))
           self::$_def = count(self::$_all) > 0 ? self::$_all[0] : '';
@@ -190,7 +187,7 @@
     */
     public static function loadPath($dn,$lang=null) {
       // Формируем каталог
-      $_ = self::correctPath($dn);
+      $_ = rtrim(implode(DIRECTORY_SEPARATOR,explode('/',$dn)),DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
       $_.= (is_null($lang) ? self::$_now : $lang);
       $_.= DIRECTORY_SEPARATOR.'*.lng';
       // Сканируем директорию
@@ -236,26 +233,13 @@
     public static function paths($v=null,$replace=false) {
       if (is_null(self::$_paths)) self::$_paths = array();
       if (is_array($v)) {
+        $_ = DIRECTORY_SEPARATOR;
         if ($replace) self::$_paths = array();
         foreach ($v as $path)
-          if (!in_array($path,self::$_paths)) self::$_paths[] = self::correctPath($path);
+          if (!in_array($path,self::$_paths))
+            self::$_paths[] = rtrim(implode($_,explode('/',$path)),$_).$_;
       }
       return self::$_paths;
-    }
-
-    /* LIBRARY:FUNCTION
-      @name        : correctPath
-      @description : Коррекция пути
-
-      @param : $v | string | value | | Значение
-
-      @return : string
-    */
-    public static function correctPath($v) {
-      $_ = explode('/',$v);
-      $_ = implode(DIRECTORY_SEPARATOR,$_);
-      $_ = rtrim($_,DIRECTORY_SEPARATOR);
-      return $_.DIRECTORY_SEPARATOR;
     }
   }
   /* LIBRARY ~END */

@@ -4,7 +4,7 @@
     @component   : xbLib
     @type        : clibrary
     @description : Основная библиотека
-    @revision    : 2015-12-07 12:07:00
+    @revision    : 2015-12-10 13:09:00
   */
 
   /* LIBRARY ~BEGIN */
@@ -345,7 +345,7 @@
         $s = isset($input[$k]) ? $input[$k] : $v;
         $out[$k] = is_array($v) ? self::mergeArrays(
           $v,(is_array($input[$k]) ? $input[$k] : array())
-        ) : (is_array($input[$k]) ? $v : $s);
+        ) : (is_array($input[$k]) ? $v : (is_int($v) ? intval($s) : $s));
       }
       return $out;
     }
@@ -394,7 +394,9 @@
       @param : $def | array  | value | @NULL | Данные по умолчанию
       @param : $cln | string | value | @NULL | Имя класса
 
-      @return : array | массив; элемент body содержит очищенный шаблон, элемент data содержит извлечённые данные
+      @return : array | массив:
+                        элемент body содержит очищенный шаблон,
+                        элемент data содержит извлечённые данные
     */
     public static function extractData($tpl,$def=null,$cln='') {
       $_tpl = $tpl;
@@ -429,8 +431,7 @@
       @return : string | Сгенерированная строка
     */
     public static function key($c=32) {
-      $s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      $R = '';
+      $R = ''; $s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       for($_ = 0; $_ < $c; $_++) $R.= $s[mt_rand(0,61)];
       return $R;
     }
@@ -525,20 +526,17 @@
       @return : boolean | Булево представление значения
     */
     public static function bool($v) { return ((strval($v)=='true')||($v===true)||(intval($v)>0)); }
-
-    /* CLASS:STATIC
-      @name        : ctype_word
-      @description : Соответствие "слову"
-
-      @param : $v | | value | | Значение
-
-      @return : boolean
-    */
-    public static function ctype_word($v) { return ctype_alnum(str_replace('_','',$v)); }
   }
   /* LIBRARY ~END */
 
   /* COMPAT ~BEGIN */
+  /* @function ctype_word */
+  if (!function_exists('ctype_word')) {
+    function ctype_word($v) {
+      return ctype_alnum(str_replace('_','',$v));
+    }
+  }
+
   /* @function http_responce_code */
   if (!function_exists('http_response_code')) {
     // Для версий до 5.4
@@ -557,7 +555,7 @@
     }
   }
 
-  /* @function http_responce_code */
+  /* @function mime_content_type */
   if (!function_exists('mime_content_type')) {
     function mime_content_type($filename) {
       $ext = strtolower(array_pop(explode('.',$filename)));

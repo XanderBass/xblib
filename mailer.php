@@ -4,7 +4,7 @@
     @component   : xbMailer
     @type        : class
     @description : Класс отправки электропочты
-    @revision    : 2015-11-14 14:40:00
+    @revision    : 2015-12-10 13:03:00
   */
 
   /* CLASS ~BEGIN */
@@ -89,15 +89,7 @@
     }
 
     /******** ВНУТРЕННИЕ МЕТОДЫ КЛАССА ********/
-    /* CLASS:INTERNAL
-      @name        : correct_mail
-      @description : Коррекция адреса
-
-      @param : $str      | string | value | | Адрес
-      @param : $onlyAddr | bool   | value | | Только адрес
-
-      @return : string
-    */
+    /* Коррекция адреса */
     protected function correct_mail($str,$onlyAddr=false) {
       $mtpl = '([\w\.\-]+)\@([\w\.\-]+)';
       $ftpl = '/^(.*)\<'.$mtpl.'\>$/siu';
@@ -112,16 +104,7 @@
       return $this->encode_str($name).' <'.$mail.'>';
     }
 
-    /* CLASS:INTERNAL
-      @name        : _socket
-      @description : Сокет
-
-      @param : $socket | string | value | | Команда
-      @param : $resp   | string | value | | Ответ
-      @param : $str    | string | value | | Строка
-
-      @return : string
-    */
+    /* Сокет */
     protected function _socket($socket,$resp,$str='') {
       $sresp = null;
       while (@substr($sresp,3,1) != ' ') {
@@ -137,27 +120,12 @@
       return true;
     }
 
-    /* CLASS:INTERNAL
-      @name        : encode_str
-      @description : Закодировать строку
-
-      @param : $s | string | value | | Строка
-
-      @return : string
-    */
+    /* Закодировать строку */
     protected function encode_str($s) {
       return '=?'.$this->_mailConfig['charset'].'?B?'.base64_encode($s)."?=";
     }
 
-    /* CLASS:INTERNAL
-      @name        : encode_file
-      @description : Закодировать файл
-
-      @param : $fn       | string | value | | Имя файла
-      @param : $boundary | string | value | | Разделитель
-
-      @return : string
-    */
+    /* Закодировать файл */
     protected function encode_file($fn,$boundary) {
       $msg = 'Content-Type: application/octet-stream; name="'.basename($fn).'"'."\r\n";
       $msg.= "Content-transfer-encoding: base64\r\n";
@@ -169,25 +137,12 @@
       return $msg;
     }
 
-    /* CLASS:INTERNAL
-      @name        : get_reply
-      @description : Получить ответчика
-
-      @return : string
-    */
+    /* Получить ответчика */
     protected function get_reply() {
       return $this->encode_str($this->_mailConfig['from']).' <'.$this->_mailConfig['replyto'].'>';
     }
 
-    /* CLASS:INTERNAL
-      @name        : get_headers
-      @description : Получить заголовки
-
-      @param : $to      | string | value | | До
-      @param : $subject | string | value | | Тема
-
-      @return : array
-    */
+    /* Получить заголовки */
     protected function get_headers($to,$subject) {
       $headers = array(
         "MIME-Version" => $this->_mailConfig['version'],

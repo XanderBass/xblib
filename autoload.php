@@ -5,7 +5,7 @@
    * остальными автозагрузками.
    *
    * Поддерживает архитектуру RepoDyn.
-   * XBLIB_DEPLOY_ROOT должен содержать путь от корня web-проекта.
+   * XBLIB_DEPLOY_ROOT должен содержать путь от корня web-проекта (см. значение по умолчанию).
    */
 
   /* INFO
@@ -21,6 +21,8 @@
   function xbLibAutoload($classname,$ex=false) {
     static $paths = null;
     static $subs  = null;
+    // Пропуск, если не тутошний класс.
+    if (!preg_match('/^xb(\w+)$/',$classname)) return true;
     // Пути поиска
     if (is_null($paths)) {
       $paths = array(dirname(__FILE__).DIRECTORY_SEPARATOR);
@@ -39,20 +41,16 @@
         foreach ($_ as $N)
           if (is_dir($paths[0].$N) && !in_array($N,array('.','..'))) $subs[] = $N;
     }
-    // Пропуск, если не тутошний класс. Кеш всё равно полезно активировать
-    if (!preg_match('/^xb(\w+)$/',$classname)) return true;
     // Инициализация
     $folder = '';
     $fname  = '';
-//    $fpack  = false;
-    // Проверка субпапок
+    // Проверка субпапок пакетов
     foreach ($subs as $sub) {
       $tpl = '/^xb'.ucfirst($sub).'(\w+)$/';
       if (preg_match($tpl,$classname)) {
         $folder = $sub.DIRECTORY_SEPARATOR;
         $fname  = strtolower(preg_replace($tpl,'\1',$classname));
         if (empty($fname)) $fname = 'lib';
-//        $fpack = true;
       }
     }
     // Проверка общих файлов
@@ -80,4 +78,6 @@
   }
 
   spl_autoload_register('xbLibAutoload');
+
+  /* INFO @copyright: Xander Bass, 2015 */
 ?>
