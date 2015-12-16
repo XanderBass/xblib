@@ -4,16 +4,23 @@
     @component   : xbNodePlugin
     @type        : class
     @description : Класс плагина
-    @revision    : 2015-12-16 16:43:00
+    @revision    : 2015-12-16 18:12:00
   */
 
   /* CLASS ~BEGIN */
+  /**
+   * Class xbNodePlugin
+   * @property-read string $key
+   */
   class xbNodePlugin extends xbNodePrototype {
     const delegate = '/^(handle|hook|on)(\w+)$/';
+
+    protected $_key = '';
 
     /* CLASS:CONSTRUCT */
     function __construct($owner) {
       parent::__construct($owner);
+      $this->_key = $this->_module.(empty($this->_nodeName) ? '' : ".".$this->_nodeName);
       $api = get_class_methods($this);
       $me  = is_object($this->_owner);
       if ($me) $me = method_exists($this->_owner,'delegate');
