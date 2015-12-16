@@ -4,7 +4,7 @@
     @component   : xbLib
     @type        : clibrary
     @description : Основная библиотека
-    @revision    : 2015-12-10 13:09:00
+    @revision    : 2015-12-11 17:41:00
   */
 
   /* LIBRARY ~BEGIN */
@@ -179,7 +179,9 @@
 
       @return : string
     */
-    public static function correctPath($path) { $P = explode('/',$path); return implode(DIRECTORY_SEPARATOR,$P); }
+    public static function correctPath($path) {
+      return rtrim(implode(DIRECTORY_SEPARATOR,explode('/',$path)),DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+    }
 
     /* LIBRARY:FUNCTION
       @name        : correctDir
@@ -189,7 +191,9 @@
 
       @return : string
     */
-    public static function correctDir($path) { $P = explode(DIRECTORY_SEPARATOR,$path); return implode('/',$P); }
+    public static function correctDir($path) {
+      return rtrim(implode('/',explode(DIRECTORY_SEPARATOR,$path)),'/').'/';
+    }
 
     /* LIBRARY:FUNCTION
       @name        : search

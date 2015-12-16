@@ -4,7 +4,7 @@
     @component   : xbClass
     @type        : class
     @description : Базовый класс
-    @revision    : 2015-12-10 12:59:00
+    @revision    : 2015-12-16 12:00:00
   */
 
   /* CLASS ~BEGIN
@@ -19,10 +19,12 @@
    * @property-read array  $methods
    * @property-read object $owner
    *
-   * @method bool onClassError()
+   * @method bool onError()
    */
   class xbClass {
     const functionName = '#^([[:alpha:]])(\w+)([[:alpha:]\d])$#si';
+
+    protected static $_errorHandler = null;
 
     protected $_debugTrace = array();
     protected $_events     = array();
@@ -41,7 +43,7 @@
       } elseif (property_exists($this,"_$n"))  { $f = "_$n"; return $this->$f;
       } elseif (method_exists($this,"set_$n")) { $e = 'write_only';
       } else { $e = property_exists($this,$n) ? 'protected' : 'not_exists'; }
-      return (!$this->onClassError("property:$e",$n));
+      return (!$this->error('class',"property:$e",$n));
     }
 
     /* CLASS:SET */
@@ -49,7 +51,7 @@
       if (method_exists($this,"set_$n"))       { $f = "set_$n"; return $this->$f($v);
       } elseif (method_exists($this,"get_$n")) { $e = 'read_only';
       } else { $e = property_exists($this,$n) ? 'protected' : 'not_exists'; }
-      return (!$this->onClassError("property:$e",$n));
+      return (!$this->error('class',"property:$e",$n));
     }
 
     /* CLASS:CALL */
@@ -60,7 +62,7 @@
       } elseif (isset($this->_methods[$n])) {
         return call_user_func_array($this->_methods[$n],$p);
       }
-      return (!$this->onClassError("method:not_exists",$n));
+      return (!$this->error('class',"method:not_exists",$n));
     }
 
     /* CLASS:STRING */
@@ -121,7 +123,7 @@
           $this->_events[$n][] = $f;
           return true;
         }
-      } else { return (!$this->onClassError("event:invalid_name",$n)); }
+      } else { return (!$this->error('class',"event:invalid_name",$n)); }
       return true;
     }
 
@@ -140,7 +142,7 @@
           $this->_methods[$n] = $f;
           return true;
         }
-      } else { return (!$this->onClassError("method:invalid_name",$n)); }
+      } else { return (!$this->error('class',"method:invalid_name",$n)); }
       return false;
     }
 
@@ -158,6 +160,31 @@
       if (!isset($fargs[0])) return true;
       $n = array_shift($fargs);
       return $this->call_event($n,$fargs);
+    }
+
+    /* CLASS:METHOD
+      @name        : error
+      @description : Ошибка
+
+      @return : ?
+    */
+    public function error() {
+      $a = func_get_args();
+      if (!$this->call_event('error',$a)) return false;
+      if (is_callable(self::$_errorHandler,true)) {
+        return call_user_func_array(self::$_errorHandler,$a);
+      } elseif (self::$_errorHandler === true) { return true; }
+      throw new Exception('xbLib error: '.implode('|',$a));
+    }
+
+    /* Установка функции обработки ошибок */
+    public static function errorHandler($v=null) {
+      if (is_callable($v,true) || ($v === true)) {
+        self::$_errorHandler = $v;
+      } elseif ($v === false) {
+        self::$_errorHandler = null;
+      }
+      return self::$_errorHandler;
     }
   }
   /* CLASS ~END */

@@ -13,7 +13,7 @@
     @component   : autoload
     @type        : autoload
     @description : Файл автоподгрузки
-    @revision    : 2015-12-07 14:53:00
+    @revision    : 2015-12-16 12:23:00
   */
 
   if (!defined("XBLIB_DEPLOY_ROOT")) define("XBLIB_DEPLOY_ROOT",'system/external/xblib');
@@ -26,13 +26,15 @@
     // Пути поиска
     if (is_null($paths)) {
       $paths = array(dirname(__FILE__).DIRECTORY_SEPARATOR);
-      $D = realpath($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR;
-      $_ = explode('/',XBLIB_DEPLOY_ROOT);
-      $l = count($_) - 1;
-      if (empty($_[$l])) unset($_[$l]);
-      $D.= implode(DIRECTORY_SEPARATOR,$_);
-      $D = realpath($D).DIRECTORY_SEPARATOR;
-      if ($D != $paths[0]) $paths[] = $D;
+      if (XBLIB_DEPLOY_ROOT != '') {
+        $D = realpath($_SERVER['DOCUMENT_ROOT']).DIRECTORY_SEPARATOR;
+        $_ = explode('/',XBLIB_DEPLOY_ROOT);
+        $l = count($_) - 1;
+        if (empty($_[$l])) unset($_[$l]);
+        $D.= implode(DIRECTORY_SEPARATOR,$_);
+        $D = realpath($D).DIRECTORY_SEPARATOR;
+        if ($D != $paths[0]) $paths[] = $D;
+      }
     }
     // Суб-папки, пакеты
     if (is_null($subs)) {
