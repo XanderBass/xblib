@@ -18,6 +18,7 @@
 
   if (!defined("XBLIB_DEPLOY_ROOT")) define("XBLIB_DEPLOY_ROOT",'system/external/xblib');
 
+  /* AUTOLOAD ~BEGIN */
   function xbLibAutoload($classname,$ex=false) {
     static $paths = null;
     static $subs  = null;
@@ -80,6 +81,7 @@
   }
 
   spl_autoload_register('xbLibAutoload');
+  /* AUTOLOAD ~END */
 
   /* INFO @copyright: Xander Bass, 2015 */
 ?>

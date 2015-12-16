@@ -4,7 +4,7 @@
     @component   : xbClass
     @type        : class
     @description : Базовый класс
-    @revision    : 2015-12-16 12:00:00
+    @revision    : 2015-12-16 16:36:00
   */
 
   /* CLASS ~BEGIN
@@ -41,43 +41,36 @@
     function __get($n) {
       if (method_exists($this,"get_$n"))       { $f = "get_$n"; return $this->$f();
       } elseif (property_exists($this,"_$n"))  { $f = "_$n"; return $this->$f;
-      } elseif (method_exists($this,"set_$n")) { $e = 'write_only';
-      } else { $e = property_exists($this,$n) ? 'protected' : 'not_exists'; }
-      return (!$this->error('class',"property:$e",$n));
+      } elseif (method_exists($this,"set_$n")) { $e = 'write only';
+      } else { $e = property_exists($this,$n) ? 'protected' : 'not exists'; }
+      return (!$this->error('class',"property $e",$n));
     }
 
     /* CLASS:SET */
     function __set($n,$v) {
       if (method_exists($this,"set_$n"))       { $f = "set_$n"; return $this->$f($v);
-      } elseif (method_exists($this,"get_$n")) { $e = 'read_only';
-      } else { $e = property_exists($this,$n) ? 'protected' : 'not_exists'; }
-      return (!$this->error('class',"property:$e",$n));
+      } elseif (method_exists($this,"get_$n")) { $e = 'read only';
+      } else { $e = property_exists($this,$n) ? 'protected' : 'not exists'; }
+      return (!$this->error('class',"property $e",$n));
     }
 
     /* CLASS:CALL */
     function __call($n,$p) {
       if (preg_match('/^on(\w+)$/',$n)) {
         $e = lcfirst(preg_replace('/^on(\w+)$/','\1',$n));
-        return $this->call_event($e,$p);
+        return $this->_callEvent($e,$p);
       } elseif (isset($this->_methods[$n])) {
         return call_user_func_array($this->_methods[$n],$p);
       }
-      return (!$this->error('class',"method:not_exists",$n));
+      return (!$this->error('class',"method not exists",$n));
     }
 
     /* CLASS:STRING */
     function __toString() { return $this->GUID; }
 
-    /* CLASS:INTERNAL
-      @name        : call_event
-      @description : Вызов события
-
-      @param : $e    | string | value | | Название события
-      @param : $args | array  | value | | Аргументы события
-
-      @return : bool
-    */
-    protected function call_event($e,$args) {
+    /******** ВНУТРЕННИЕ МЕТОДЫ КЛАССА ********/
+    /* Вызов события */
+    protected function _callEvent($e,$args) {
       if (!isset($this->_events[$e]))    return true;
       if (!is_array($this->_events[$e])) return true;
       $ret = true;
@@ -99,6 +92,7 @@
       return $ret;
     }
 
+    /******** АКСЕССОРЫ КЛАССА ********/
     /* CLASS:PROPERTY
       @name        : GUID
       @description : GUID класса
@@ -107,6 +101,7 @@
     */
     protected function get_GUID() { return strtoupper(md5(get_class($this))); }
 
+    /******** ПУБЛИЧНЫЕ МЕТОДЫ КЛАССА ********/
     /* CLASS:METHOD
       @name        : registerEvent
       @description : Регистрация события
@@ -123,7 +118,7 @@
           $this->_events[$n][] = $f;
           return true;
         }
-      } else { return (!$this->error('class',"event:invalid_name",$n)); }
+      } else { return (!$this->error('class',"invalid event name",$n)); }
       return true;
     }
 
@@ -142,7 +137,7 @@
           $this->_methods[$n] = $f;
           return true;
         }
-      } else { return (!$this->error('class',"method:invalid_name",$n)); }
+      } else { return (!$this->error('class',"invalid method name",$n)); }
       return false;
     }
 
@@ -159,7 +154,7 @@
       $fargs = func_get_args();
       if (!isset($fargs[0])) return true;
       $n = array_shift($fargs);
-      return $this->call_event($n,$fargs);
+      return $this->_callEvent($n,$fargs);
     }
 
     /* CLASS:METHOD
@@ -170,13 +165,14 @@
     */
     public function error() {
       $a = func_get_args();
-      if (!$this->call_event('error',$a)) return false;
+      if (!$this->_callEvent('error',$a)) return false;
       if (is_callable(self::$_errorHandler,true)) {
         return call_user_func_array(self::$_errorHandler,$a);
       } elseif (self::$_errorHandler === true) { return true; }
       throw new Exception('xbLib error: '.implode('|',$a));
     }
 
+    /******** АКСЕССОРЫ К СТАТИЧЕСКИМ СВОЙСТВАМ КЛАССА ********/
     /* Установка функции обработки ошибок */
     public static function errorHandler($v=null) {
       if (is_callable($v,true) || ($v === true)) {

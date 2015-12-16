@@ -4,7 +4,7 @@
     @component   : xbMailer
     @type        : class
     @description : Класс отправки электропочты
-    @revision    : 2015-12-10 13:03:00
+    @revision    : 2015-12-16 16:24:00
   */
 
   /* CLASS ~BEGIN */
@@ -31,7 +31,6 @@
     protected $_copies    = array();
     protected $_hidden    = array();
 
-    /******** ОБЩИЕ МЕТОДЫ КЛАССА ********/
     /* CLASS:CONSTRUCT */
     function __construct() { $this->mailConfig = array(); }
 

@@ -4,7 +4,7 @@
     @component   : xbException
     @type        : class
     @description : Класс исключения
-    @revision    : 2015-12-16 12:16:00
+    @revision    : 2015-12-16 16:23:00
   */
 
   /* CLASS ~BEGIN @string : Лог */
@@ -28,6 +28,7 @@
       $this->_data['line'] = isset($_['line']) ? $_['line'] : -1;
     }
 
+    /******** ПУБЛИЧНЫЕ МЕТОДЫ КЛАССА ********/
     /* CLASS:METHOD
       @name        : getData
       @description : Вернуть данные
