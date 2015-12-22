@@ -4,7 +4,7 @@
     @component   : xbNodeAPI
     @type        : class
     @description : Класс API
-    @revision    : 2015-12-16 17:53:00
+    @revision    : 2015-12-22 13:33:00
   */
 
   /* CLASS ~BEGIN */

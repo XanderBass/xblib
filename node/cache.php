@@ -4,7 +4,7 @@
     @component   : xbNodeCache
     @type        : class
     @description : Класс обработчика кеша
-    @revision    : 2015-12-16 18:05:00
+    @revision    : 2015-12-22 13:33:00
   */
 
   /* CLASS ~BEGIN */

@@ -4,7 +4,7 @@
     @component   : xbNodePrototype
     @type        : class
     @description : Класс прототипа ноды
-    @revision    : 2015-12-16 18:07:00
+    @revision    : 2015-12-22 13:35:00
   */
 
   /* CLASS ~BEGIN */

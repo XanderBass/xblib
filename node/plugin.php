@@ -4,7 +4,7 @@
     @component   : xbNodePlugin
     @type        : class
     @description : Класс плагина
-    @revision    : 2015-12-16 18:12:00
+    @revision    : 2015-12-22 13:34:00
   */
 
   /* CLASS ~BEGIN */

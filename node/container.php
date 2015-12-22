@@ -4,7 +4,7 @@
     @component   : xbNodeContainer
     @type        : class
     @description : Класс контейнера
-    @revision    : 2015-12-16 17:45:00
+    @revision    : 2015-12-22 13:31:00
   */
 
   define("XBNODE_PM_NO_EVENTS",0);
@@ -162,10 +162,8 @@
       switch ($this->_eventMethod) {
         case 1: case 5: return $this->_callEContainer($e,$args);
         case 2: case 6: return $this->_callEPlugins($e,$args);
-        case 3:
-          return ($this->_callEContainer($e,$args) ? $this->_callEPlugins($e,$args) : false);
-        case 7:
-          return ($this->_callEPlugins($e,$args) ? $this->_callEContainer($e,$args) : false);
+        case 3: return ($this->_callEContainer($e,$args) ? $this->_callEPlugins($e,$args) : false);
+        case 7: return ($this->_callEPlugins($e,$args) ? $this->_callEContainer($e,$args) : false);
         default: return true;
       }
     }

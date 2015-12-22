@@ -4,7 +4,7 @@
     @component   : xbNode
     @type        : clibrary
     @description : Библиотека нодовой логики
-    @revision    : 2015-12-16 16:19:00
+    @revision    : 2015-12-22 13:34:00
   */
 
   /* LIBRARY ~BEGIN */

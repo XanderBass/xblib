@@ -4,7 +4,7 @@
     @component   : xbNodeUnit
     @type        : class
     @description : Класс модуля обработки
-    @revision    : 2015-12-16 16:46:00
+    @revision    : 2015-12-22 13:35:00
   */
 
   /* CLASS ~BEGIN */

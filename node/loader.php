@@ -4,7 +4,7 @@
     @component   : xbNodeLoader
     @type        : class
     @description : Класс процессора кеша
-    @revision    : 2015-12-16 17:59:00
+    @revision    : 2015-12-22 13:34:00
   */
 
   /* CLASS ~BEGIN */
