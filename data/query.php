@@ -4,10 +4,11 @@
     @component   : xbDataModel
     @type        : сlass
     @description : Библиотека функций для работы с полями данными
-    @revision    : 2015-12-22 13:22:00
+    @revision    : 2015-12-22 14:04:00
   */
 
-  if (!class_exists('xbDataModels')) require 'models.php';
+  if (!class_exists('xbDataFields')) require 'fields.php';
+  if (!class_exists('xbDataModel'))  require 'model.php';
 
   /* CLASS ~BEGIN */
   /**
