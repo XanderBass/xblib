@@ -93,12 +93,12 @@
 
       @return : array
     */
-    public static function request($fields,$prefix='',$operation='create') {
+    public static function request($fields,$prefix='',$operation='create',$source=null) {
       // Статика
       static $freq = null;
       static $fhid = null;
-      if (is_null($freq)) $freq = xbData::flagName('required');
-      if (is_null($fhid)) $fhid = xbData::flagName('hidden');
+      if (is_null($freq)) $freq = xbDataFields::flagName('required');
+      if (is_null($fhid)) $fhid = xbDataFields::flagName('hidden');
       // Инициализация
       $ret = array(
         'values'    => array(),
@@ -109,15 +109,20 @@
       $op = xbData::operation($operation);
       if (!in_array($op,array('create','read','update'))) return false;
       // Поля
-      foreach ($fields as $alias => $field)        { $got  = null;
-        if       (isset($_POST[$prefix.$alias]))   { $got = $_POST[$prefix.$alias];
-        } elseif (isset($_GET[$prefix.$alias]))    { $got = urldecode($_GET[$prefix.$alias]); }
+      foreach ($fields as $alias => $field) {
+        $got = null;
+        if (!is_array($source)) {
+          if       (isset($_POST[$prefix.$alias])) { $got = $_POST[$prefix.$alias];
+          } elseif (isset($_GET[$prefix.$alias]))  { $got = urldecode($_GET[$prefix.$alias]); }
+        } else { if (isset($source[$alias])) $got = $source[$alias]; }
         if (!$field['access'][$op] || (($field['flags'] & $fhid) != 0)) continue;
         // Проверка обязательности
         $req = (($field['flags'] & $freq) != 0);
         if ($req) {
-          if (is_null($got) || empty($got)) $ret['notset'][] = $alias;
-          continue;
+          if (is_null($got) || empty($got)) {
+            $ret['notset'][] = $alias;
+            continue;
+          }
         }
         // Регулярки
         $cor = true;
@@ -141,7 +146,6 @@
         // Обработка
         if (!is_null($field['strip'])) $got = preg_replace($field['strip'],'',$got);
         $got = xbData::pack($field['type'],$got);
-        // Установка значения
         $ret['values'][$alias] = $got;
       }
       return $ret;
@@ -159,11 +163,8 @@
       $ret   = array();
       $names = is_array($v) ? $v : explode(',',strval($v));
       foreach ($names as $name) $ret[$name] = array(
-        'alias'   => $name,
-        'id'      => 0,
         'caption' => ucfirst($name),
-        'access'  => 0x22222222,
-        'flags'   => array('system')
+        'access'  => 0x22222222
       );
       return $ret;
     }

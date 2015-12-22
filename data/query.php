@@ -7,7 +7,7 @@
     @revision    : 2015-12-20 16:21:00
   */
 
-  if (!class_exists('xbDataModel')) require 'models.php';
+  if (!class_exists('xbDataModels')) require 'models.php';
 
   /* CLASS ~BEGIN */
   /**
@@ -52,7 +52,9 @@
           foreach ($_ as $alias) {
             if ($this->owner->fields[$alias]['add'] && ($this->_type != 'table')) {
               if ($this->join_add($alias)) $this->_fields[$alias] = "t_$alias.`value`";
-            } else { $this->_fields[$alias] = "tmain.`$alias`"; }
+            } elseif (is_null($this->owner->fields[$alias]['external'])) {
+              $this->_fields[$alias] = "tmain.`$alias`";
+            } // TODO: External
           }
           // Данные
           $this->_data = $data;
@@ -131,7 +133,9 @@
             case 'where.field':
               if ($this->owner->fields[$nv]['add']) {
                 if ($this->join_add($nv)) $ffn = "t_$nv.`value`";
-              } else { $ffn = "tmain.`$nv`"; }
+              } elseif (is_null($this->owner->fields[$nv]['external'])) {
+                $ffn = "tmain.`$nv`";
+              } // TODO: External
               break;
             case 'where.value': $fvl = $nv; break;
             case 'where.query': $fqr = $nv; break;
@@ -143,7 +147,9 @@
                 $vl = $this->value($nk,$nv);
                 if ($this->owner->fields[$nk]['add']) {
                   if ($this->join_add($nk)) $ret[] = "(t_$nk.`value` $op $vl)";
-                } else { $ret[] = "(tmain.`$nk` $op $vl)"; }
+                } elseif (is_null($this->owner->fields[$nk]['external'])) {
+                  $ret[] = "(tmain.`$nk` $op $vl)";
+                } // TODO: External
               }
           }
         }
@@ -155,7 +161,9 @@
             $vl = is_null($fqr) ? $this->value($ffn,$fvl) : "($fqr)";
             if ($this->owner->fields[$ffn]['add']) {
               if ($this->join_add($ffn)) return "(t_$ffn.`value` $fop $vl)";
-            } else { return "(tmain.`$ffn` $fop $vl)"; }
+            } elseif (is_null($this->owner->fields[$ffn]['external'])) {
+              return "(tmain.`$ffn` $fop $vl)";
+            } // TODO: External
           }
         }
       }
@@ -191,7 +199,9 @@
         if (isset($this->owner->fields[$fn])) {
           if ($this->owner->fields[$fn]['add']) {
             if ($this->join_add($fn)) $ret[] = "t_$fn.`value` $fv";
-          } else { $ret[] = "tmain.`$fn` $fv"; }
+          } elseif (is_null($this->owner->fields[$fn]['external'])) {
+            $ret[] = "tmain.`$fn` $fv";
+          } // TODO: External
         }
       }
       if (empty($ret)) return $this;
@@ -319,11 +329,11 @@
           $f = array();
           $p = '';
           foreach ($this->_fields as $alias => $v) {
-            $f[] = "`$alias` ".xbDataFields::sqlType($this->owner->fields[$alias]);
+            $f[] = "`$alias` ".xbDataFields::SQLType($this->owner->fields[$alias]);
             if ($this->owner->fields[$alias]['primary']) $p = $alias;
           }
           $_ = $this->_query." (".implode(',',$f);
-          if (!empty($p)) $_.= "primary key (`$p`)";
+          if (!empty($p)) $_.= ",primary key (`$p`)";
           $_.= ") engine=InnoDB";
           $_.= " insert_method=first"; // TODO
           return array($_);

@@ -124,6 +124,25 @@
     }
 
     /* LIBRARY:FUNCTION
+      @name        : SQLOperation
+      @description : Получение унифицированного имени операции
+
+      @param : $o | string | value | | Входное значение
+
+      @return : string
+    */
+    public static function SQLOperation($o) {
+      if (in_array($o,array('table','clear','replace'))) return $o;
+      $O = self::operation($o);
+      if (!$O) return false;
+      switch ($O) {
+        case 'read'  : return 'select';
+        case 'create': return 'insert';
+      }
+      return $O;
+    }
+
+    /* LIBRARY:FUNCTION
       @name        : pack
       @description : Упаковка значения
 

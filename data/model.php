@@ -7,7 +7,7 @@
     @revision    : 2015-12-20 16:36:00
   */
 
-  if (!class_exists('xbDataModel')) require 'models.php';
+  if (!class_exists('xbDataQuery')) require 'query.php';
 
   /* CLASS ~BEGIN */
   /**
@@ -90,8 +90,12 @@
       } else                      { $_names = array_keys($this->_fields); }
       foreach ($_names as $name)
         if (isset($this->_fields[$name]))
-          if (!$_omain || !$this->_fields[$name]['add'])
-            if ($this->_fields[$name]['access'][$op]) $fnames[] = $name;
+          if (!$_omain || (!$this->_fields[$name]['add'] && is_null($this->_fields[$name]['external'])))
+            if ($operation == 'table') {
+              $fnames[] = $name;
+            } else {
+              if ($this->_fields[$name]['access'][$op]) $fnames[] = $name;
+            }
       return $fnames;
     }
 
@@ -130,7 +134,7 @@
           }
         }
         // Определение значения
-        if (!$field['add']) {
+        if (!$field['add'] && is_null($field['external'])) {
           if (!isset($val['create']) && @!is_null($val['create'])) {
             // Неполный крейт невозможен (некорректно)
             $rMain = false;
@@ -142,7 +146,7 @@
           }
           if (isset($val['update']))
             $ret['main']['update'][$alias] = $val['update'];
-        } else {
+        } elseif ($field['add']) {
           $fid = $field['id'];
           foreach (array('create','update') as $op) {
             if (isset($val[$op])) {
@@ -154,6 +158,9 @@
               } else { $ret['delete'][$op][] = $fid; }
             }
           }
+        } else {
+          if (isset($val['update']))
+            $ret['external']['update'][$alias] = $val['update'];
         }
       }
       return $ret;
@@ -188,13 +195,11 @@
       if (!$this->_ready) return false;
       $DATA   = null;
       $FIELDS = $fields;
-      $TYPE   = xbData::operation($type);
-      if (in_array($type,array('table','clear','replace'))) $TYPE = $type;
+      $TYPE   = xbData::SQLOperation($type);
       if (!$TYPE) return false;
-      if (in_array($TYPE,array('create','replace','update'))) {
+      if (in_array($TYPE,array('insert','replace','update'))) {
         $DATA   = array();
         $FIELDS = null;
-        if ($TYPE == 'create') $TYPE = 'insert';
         if (!is_array($data)) return false;
         foreach ($data as $record) {
           if (!is_array($record)) {

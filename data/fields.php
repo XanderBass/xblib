@@ -59,9 +59,9 @@
     public static function flags($get=null,$int=false) {
       static $_flags = null;
       if (is_null($_flags)) $_flags = xbData::entityFlags(array(
-         2 => 'hidden',  // Скрытое поле, не обрабатывается в запросах
-         1 => 'repeat',  // Повторение поля
-         0 => 'required' // Обязательное поле
+         3 => 'hidden',  // Скрытое поле, не обрабатывается в запросах
+         2 => 'repeat',  // Повторение поля
+         1 => 'required' // Обязательное поле
       ));
       return xbData::flagsValue($_flags,$get,$int);
     }
@@ -101,14 +101,14 @@
       foreach (array(
                  'id','type','access',
                  'flags','length','default','elements','input',
-                 'regexp','replace','strip','access'
+                 'regexp','replace','strip','access','external'
                ) as $k) if (!isset($ret[$k])) $ret[$k] = null;
       // Коррекция типа
       $ret['type']    = is_null($ret['type']) ? 0 : xbDataTypes::type($ret['type']);
       $ret['default'] = xbDataTypes::value($ret['type'],$ret['default']);
       // Кеширование флагов типа
       $ret['primary']       = (($ret['type'] & XBDATA_TYPE_PRIMARY) != 0);
-      $ret['null']          = (($ret['type'] & XBDATA_TYPE_NULLABLE) != 0);
+      $ret['null']          = (($ret['type'] & XBDATA_TYPE_NOTNULL) == 0);
       $ret['autoincrement'] = (($ret['type'] & XBDATA_TYPE_AUTOINCREMENT) != 0);
       $ret['unsigned']      = (($ret['type'] & XBDATA_TYPE_UNSIGNED) != 0);
       if ($ret['primary']) $ret['null'] = false;
@@ -123,8 +123,7 @@
       }
       if (is_null($ret['input'])) $ret['input'] = self::input($ret['type'],is_null($ret['elements']));
       // Дополнительные параметры
-      $t =   $ret['type'] & XBDATA_TYPE_VARIABLE;
-//      $m = (($ret['type'] & XBDATA_INPUT_MULTIPLE) != 0);
+      $t = $ret['type'] & XBDATA_TYPE_VARIABLE;
       switch ($t) {
         case XBDATA_TYPE_FLOAT:
         case XBDATA_TYPE_INTEGER:
@@ -156,10 +155,10 @@
 
       @return : string
     */
-    public static function sqlType($field) {
+    public static function SQLType($field) {
       $t =   $field['type'] & XBDATA_TYPE_VARIABLE;
       $u = (($field['type'] & XBDATA_TYPE_UNSIGNED) != 0);
-      $n = (($field['type'] & XBDATA_TYPE_NULLABLE) != 0);
+      $n = (($field['type'] & XBDATA_TYPE_NOTNULL) == 0);
       $m = (($field['type'] & XBDATA_INPUT_MULTIPLE) != 0);
       $D = is_null($field['default']) ? '' : " default '".$field['default']."'";
       switch ($t) {

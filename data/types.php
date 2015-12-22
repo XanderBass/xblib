@@ -16,7 +16,7 @@
   define("XBDATA_TYPE_STRUCTURE",5);
   define("XBDATA_TYPE_DATETIME",6);
   define("XBDATA_TYPE_VARIABLE",7);
-  define("XBDATA_TYPE_NULLABLE",8);
+  define("XBDATA_TYPE_NOTNULL",8);
   // Inputs
   define("XBDATA_INPUT_MULTIPLE",0x80);
   define("XBDATA_INPUT_NAMED",0x40);
@@ -80,7 +80,7 @@
     */
     public static function value($type,$value,$action='pack') {
       $t =   $type & XBDATA_TYPE_VARIABLE;
-      $n = (($type & XBDATA_TYPE_NULLABLE) != 0);
+      $n = (($type & XBDATA_TYPE_NOTNULL) == 0);
       $u =  ($action == 'unpack');
       if (is_null($value) && $n) return null;
       switch ($t) {
@@ -114,7 +114,7 @@
       foreach ($items as $item) {
         if (!is_int($item)) {
           foreach (array("TYPE","INPUT") as $p) {
-            $C = "XBDATA_$p"."_$item";
+            $C = "XBDATA_$p"."_".strtoupper($item);
             if (defined($C)) {
               $ret |= constant($C);
               continue 2;
@@ -136,6 +136,8 @@
     public static function bool($v) { return ((strval($v)=='true')||($v===true)||(intval($v)>0)); }
   }
   /* LIBRARY ~END */
+
+  define("XBDATA_TYPE_INTKEY",xbDataTypes::type('integer,notnull,autoincrement,primary'));
 
   /* INFO @copyright: Xander Bass, 2015 */
 ?>

@@ -42,7 +42,7 @@
 
       @return : string
     */
-    public static function htmlcode($v) { return htmlspecialchars($v,ENT_QUOTES); }
+    public static function htmlcode($v,$a='pack') { return $a == 'pack' ? htmlspecialchars($v,ENT_QUOTES) : $v; }
 
     /* LIBRARY:FUNCTION
       @name        : striptags
@@ -52,7 +52,7 @@
 
       @return : string
     */
-    public static function striptags($v) { return strip_tags($v); }
+    public static function striptags($v,$a='pack') { return $a == 'pack' ? strip_tags($v) : $v; }
 
     /* LIBRARY:FUNCTION
       @name        : md5
@@ -62,7 +62,7 @@
 
       @return : string
     */
-    public static function md5($v) { return md5($v); }
+    public static function md5($v,$a='pack') { return $a == 'pack' ? md5($v) : $v; }
 
     /* LIBRARY:FUNCTION
       @name        : password
@@ -72,7 +72,8 @@
 
       @return : string
     */
-    public static function password($v) {
+    public static function password($v,$a='pack') {
+      if ($a != 'pack') return $v;
       switch (self::$_pem) {
         case 'md5': return md5($v);
       }
@@ -113,7 +114,7 @@
     public static function handlers($get=null,$int=false) {
       self::_init();
       if (!is_null($get)) {
-        $ha = $int ? 0 : array();
+        $ha = $int ? 0 : array('system' => array(),'user' => array());
         // String value
         if (is_string($get) || is_array($get)) {
           $_  = is_array($get) ? $get : explode(',',$get);
@@ -130,12 +131,12 @@
           $K = self::$_stc;
           for ($c = $K, $i = 0; $i < (self::$_shc - 1); $c++, $i = $c - $K)
             if (($G & (1 << $c)) != 0)
-              if (isset(self::$_shandlers[$i])) $ha[] = self::$_shandlers[$i];
+              if (isset(self::$_shandlers[$i])) $ha['system'][] = self::$_shandlers[$i];
           // Пользовательские обработчики
           $K = self::$_stc + self::$_shc;
           for ($c = $K, $i = 0; $i < (self::$_uhc - 1); $c++, $i = $c - $K)
             if (($G & (1 << $c)) != 0)
-              if (isset(self::$_uhandlers[$i])) $ha[] = self::$_uhandlers[$i];
+              if (isset(self::$_uhandlers[$i])) $ha['user'][] = self::$_uhandlers[$i];
         }
 
         return $int ? ($ha << self::$_stc) : $ha;
