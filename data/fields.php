@@ -99,7 +99,7 @@
       $ret = $data;
       $ret['alias'] = $name;
       foreach (array(
-                 'id','type','access',
+                 'id','type',
                  'flags','length','default','elements','input',
                  'regexp','replace','strip','access','external'
                ) as $k) if (!isset($ret[$k])) $ret[$k] = null;

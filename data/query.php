@@ -13,18 +13,19 @@
   /**
    * Class xbDataQuery
    * @property-read xbDataModel $owner
-   * @property-read bool        $ready
-   * @property-read string      $type
-   * @property-read array       $data
-   * @property-read array       $adds
-   * @property-read bool        $jmay
-   * @property-read array       $fields
-   * @property-read string      $query
-   * @property-read string      $order
-   * @property-read string      $where
-   * @property-read string      $limit
-   * @property-read string      $selectFields
-   * @property-read string      $table
+   *
+   * @property-read bool   $ready
+   * @property-read string $type
+   * @property-read array  $data
+   * @property-read array  $adds
+   * @property-read bool   $jmay
+   * @property-read array  $fields
+   * @property-read string $query
+   * @property-read string $order
+   * @property-read string $where
+   * @property-read string $limit
+   * @property-read string $selectFields
+   * @property-read string $table
    */
   class xbDataQuery {
     protected $_owner = null;
@@ -307,7 +308,8 @@
             $w = array();
             if (!empty($this->_where))   $w[] = "(".$this->_where.")";
             if (!empty($row['primary'])) $w[] = "(tmain.`id` = ".$row['primary'].")";
-            $_.= empty($w) ? '' : " where ".implode(' and ',$w);
+            $w = empty($w) ? '' : " where ".implode(' and ',$w);
+            $_.= $w;
             $ret[] = $this->_query."$join $_".$limit;
             $cfs = "select tmain.`id` from $mt as tmain".$join.$w.$limit;
             if (!empty($row['replace']['update']) && $this->_jmay) {
