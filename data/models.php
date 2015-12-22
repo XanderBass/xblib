@@ -24,9 +24,10 @@
       if (!isset($data['table']) || !isset($data['fields'])) return false;
       if (!is_array($data['fields'])) return false;
       $ret = array(
-        'table'  => $data['table'],
-        'fields' => array(),
-        'add'    => array(
+        'table'   => $data['table'],
+        'primary' => null,
+        'fields'  => array(),
+        'add'     => array(
           'table'   => '',
           'field'   => '',
           'ids'     => array(),
@@ -35,6 +36,7 @@
       );
       foreach ($data['fields'] as $alias => $field) {
         $ret['fields'][$alias] = xbDataFields::correct($field,$alias);
+        if ($ret['fields'][$alias]['primary']) $ret['primary'] = $alias;
         // Получение доступа
         $IV = $ret['fields'][$alias]['access'];
         $ret['fields'][$alias]['access'] = array();
@@ -114,7 +116,10 @@
         if (!is_array($source)) {
           if       (isset($_POST[$prefix.$alias])) { $got = $_POST[$prefix.$alias];
           } elseif (isset($_GET[$prefix.$alias]))  { $got = urldecode($_GET[$prefix.$alias]); }
-        } else { if (isset($source[$alias])) $got = $source[$alias]; }
+        } else {
+          if (!array_key_exists($alias,$source)) continue;
+          $got = $source[$alias];
+        }
         if (!$field['access'][$op] || (($field['flags'] & $fhid) != 0)) continue;
         // Проверка обязательности
         $req = (($field['flags'] & $freq) != 0);

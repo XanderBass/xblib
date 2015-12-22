@@ -16,16 +16,18 @@
    * @property-read string $table
    * @property-read array  $fields
    * @property-read array  $add
+   * @property-read string $primary
    * @property-read bool   $ready
    * @property-read string $error
    */
   class xbDataModel {
-    protected $_owner  = null; // Владелец
-    protected $_table  = null; // Название основной таблицы
-    protected $_fields = null; // Поля
-    protected $_add    = null; // Информация по дополнительным полям
-    protected $_ready  = null; // Готовность
-    protected $_error  = null; // Сообщение ошибки
+    protected $_owner   = null; // Владелец
+    protected $_table   = null; // Название основной таблицы
+    protected $_fields  = null; // Поля
+    protected $_add     = null; // Информация по дополнительным полям
+    protected $_primary = null; // Первичный ключ
+    protected $_ready   = null; // Готовность
+    protected $_error   = null; // Сообщение ошибки
 
     /* CLASS:CONSTRUCT */
     function __construct($data,$owner=null) {
@@ -42,9 +44,10 @@
         } else { $this->_ready = false; }
       } else { $ret = $data; }
       if ($this->_ready) {
-        $this->_table  = $ret['table'];
-        $this->_fields = $ret['fields'];
-        $this->_add    = $ret['add'];
+        $this->_table   = $ret['table'];
+        $this->_fields  = $ret['fields'];
+        $this->_add     = $ret['add'];
+        $this->_primary = $ret['primary'];
       }
     }
 
@@ -119,23 +122,23 @@
       foreach ($this->_fields as $alias => $field) {
         $val = array('create' => $field['default']);
         // Create
-        if ($field['access']['create'] || !$av) {
-          if (isset($record[$alias])) $val['create'] = $record[$alias];
+        if  ($field['access']['create'] || !$av) {
+          if (array_key_exists($alias,$record)) $val['create'] = $record[$alias];
           if (!$field['null'] && is_null($val['create'])) {
             if (!($field['primary'] && $field['auto'])) unset($val['create']);
             $val = array('create' => 0);
           }
         }
         // Update
-        if (!$field['primary'] && ($field['access']['update'] || !$av)) {
-          if (isset($record[$alias])) {
+        if (($field['access']['update'] || !$av) && !$field['primary']) {
+          if (array_key_exists($alias,$record)) {
             $val['update'] = $record[$alias];
             if (!$field['null'] && is_null($val['update'])) unset($val['update']);
           }
         }
         // Определение значения
         if (!$field['add'] && is_null($field['external'])) {
-          if (!isset($val['create']) && @!is_null($val['create'])) {
+          if (array_key_exists('create',$val)) {
             // Неполный крейт невозможен (некорректно)
             $rMain = false;
             $ret['main']['create'] = false;
@@ -144,12 +147,12 @@
             $ret['main']['create'][$alias] = $val['create'];
             if ($field['primary']) $ret['primary'] = $ret['main']['create'][$alias];
           }
-          if (isset($val['update']))
+          if (array_key_exists('update',$val))
             $ret['main']['update'][$alias] = $val['update'];
         } elseif ($field['add']) {
           $fid = $field['id'];
           foreach (array('create','update') as $op) {
-            if (isset($val[$op])) {
+            if (array_key_exists($op,$val)) {
               $def = true;
               if (!is_null($val[$op]))            $def = false;
               if ($val[$op] == $field['default']) $def = true;
@@ -159,7 +162,7 @@
             }
           }
         } else {
-          if (isset($val['update']))
+          if (array_key_exists('update',$val))
             $ret['external']['update'][$alias] = $val['update'];
         }
       }

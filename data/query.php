@@ -99,15 +99,16 @@
     /* получение джойнов */
     protected function join_get() {
       if (!$this->_jmay) return '';
+      $p = $this->owner->primary;
       $join = array();
       $at  = $this->owner->add['table'];
       $af  = $this->owner->add['field'];
       foreach ($this->_adds as $fn => $fid) {
         $q = "left join `[+prefix+]$at` as t_$fn on ";
-        $q.= "((t_$fn.`$af` = tmain.`id`) and (t_$fn.`field` = $fid))";
+        $q.= "((t_$fn.`$af` = tmain.`$p`) and (t_$fn.`field` = $fid))";
         $join[] = $q;
       }
-      return empty($join) ? '' : ' '.implode('',$join);
+      return empty($join) ? '' : ' '.implode(' ',$join);
     }
 
     /* получение условий */
@@ -298,6 +299,7 @@
             return array($_.$this->join_get().$this->cond_get());
           } else { return false; }
         case 'update':
+          $p = $this->owner->primary;
           $join  = $this->join_get();
           $limit = (empty($this->_limit) ? '' : " limit ".$this->_limit);
           foreach ($this->_data as $row) {
@@ -307,11 +309,11 @@
             $_ = " set ".implode(',',$q);
             $w = array();
             if (!empty($this->_where))   $w[] = "(".$this->_where.")";
-            if (!empty($row['primary'])) $w[] = "(tmain.`id` = ".$row['primary'].")";
+            if (!empty($row['primary'])) $w[] = "(tmain.`$p` = ".$row['primary'].")";
             $w = empty($w) ? '' : " where ".implode(' and ',$w);
             $_.= $w;
             $ret[] = $this->_query."$join $_".$limit;
-            $cfs = "select tmain.`id` from $mt as tmain".$join.$w.$limit;
+            $cfs = "select tmain.`$p` from $mt as tmain".$join.$w.$limit;
             if (!empty($row['replace']['update']) && $this->_jmay) {
               $ret[] = $cfs;
               $v = array();
@@ -322,7 +324,7 @@
             if (!empty($row['delete']['update']))
               $ret[] = "delete from $at"
                      . " where (`field` in (".implode(',',$row['delete']['update'])."))"
-                     . " and (`".$this->owner->add['field']."` in ($cfs))";
+                     . " and (`".$this->owner->add['field']."` in ([+ids+]))";
           }
           break;
         case 'delete': return array($this->_query.$this->join_get().$this->cond_get());
