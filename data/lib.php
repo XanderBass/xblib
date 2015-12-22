@@ -4,7 +4,7 @@
     @component   : xbData
     @type        : сlibrary
     @description : Библиотека функций для работы с данными
-    @revision    : 2015-12-20 16:13:00
+    @revision    : 2015-12-22 13:27:00
   */
 
   if (!class_exists('xbDataHandlers')) require 'handlers.php';

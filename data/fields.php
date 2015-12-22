@@ -4,7 +4,7 @@
     @component   : xbDataFields
     @type        : сlibrary
     @description : Библиотека функций для работы с полями данными
-    @revision    : 2015-12-20 16:14:00
+    @revision    : 2015-12-22 13:29:00
   */
 
   if (!class_exists('xbData')) require 'lib.php';
@@ -102,7 +102,7 @@
                  'id','type',
                  'flags','length','default','elements','input',
                  'regexp','replace','strip','access','external'
-               ) as $k) if (!isset($ret[$k])) $ret[$k] = null;
+               ) as $k) if (!array_key_exists($k,$ret)) $ret[$k] = null;
       // Коррекция типа
       $ret['type']    = is_null($ret['type']) ? 0 : xbDataTypes::type($ret['type']);
       $ret['default'] = xbDataTypes::value($ret['type'],$ret['default']);
@@ -128,7 +128,7 @@
         case XBDATA_TYPE_FLOAT:
         case XBDATA_TYPE_INTEGER:
           foreach (array('min','max') as $dk) {
-            if (!isset($ret[$dk])) $ret[$dk] = null;
+            if (!array_key_exists($dk,$ret)) $ret[$dk] = null;
             if (!is_null($ret[$dk])) {
               $ret[$dk] = ($t == XBDATA_TYPE_FLOAT) ? floatval($ret[$dk]) : intval($ret[$dk]);
               if ($ret['unsigned'] && ($ret[$dk] <= 0)) $ret[$dk] = null;
@@ -140,8 +140,6 @@
           $min = 0 - ($ret['unsigned'] ? 0 : ($max + 1));
           if ($ret['min'] <= $min) $ret['min'] = null;
           if ($ret['max'] >= $max) $ret['max'] = null;
-          break;
-        case XBDATA_TYPE_STRING:
           break;
       }
       return $ret;

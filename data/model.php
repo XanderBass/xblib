@@ -4,7 +4,7 @@
     @component   : xbDataModel
     @type        : сlass
     @description : Класс модели данных
-    @revision    : 2015-12-20 16:36:00
+    @revision    : 2015-12-22 13:26:00
   */
 
   if (!class_exists('xbDataQuery')) require 'query.php';
@@ -96,9 +96,7 @@
           if (!$_omain || (!$this->_fields[$name]['add'] && is_null($this->_fields[$name]['external'])))
             if ($operation == 'table') {
               $fnames[] = $name;
-            } else {
-              if ($this->_fields[$name]['access'][$op]) $fnames[] = $name;
-            }
+            } else { if ($this->_fields[$name]['access'][$op]) $fnames[] = $name; }
       return $fnames;
     }
 

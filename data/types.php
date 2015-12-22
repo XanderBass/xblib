@@ -4,7 +4,7 @@
     @component   : xbDataTypes
     @type        : сlibrary
     @description : Библиотека типов
-    @revision    : 2015-12-20 16:12:00
+    @revision    : 2015-12-22 13:20:00
   */
 
   // Primary types

@@ -4,7 +4,7 @@
     @component   : xbDataModel
     @type        : сlass
     @description : Библиотека функций для работы с полями данными
-    @revision    : 2015-12-20 16:21:00
+    @revision    : 2015-12-22 13:22:00
   */
 
   if (!class_exists('xbDataModels')) require 'models.php';
@@ -91,7 +91,7 @@
     /* добавление дополнительного поля в запрос */
     protected function join_add($alias) {
       if (!$this->_jmay) return false;
-      if (!isset($this->_adds[$alias]))
+      if (!array_key_exists($alias,$this->_adds))
         $this->_adds[$alias] = $this->owner->fields[$alias]['id'];
       return true;
     }

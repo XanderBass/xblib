@@ -4,7 +4,7 @@
     @component   : xbDataModels
     @type        : сlibrary
     @description : Библиотека функций для работы моделями
-    @revision    : 2015-12-20 16:43:00
+    @revision    : 2015-12-22 13:25:00
   */
 
   if (!class_exists('xbDataFields')) require 'fields.php';
@@ -114,8 +114,9 @@
       foreach ($fields as $alias => $field) {
         $got = null;
         if (!is_array($source)) {
-          if       (isset($_POST[$prefix.$alias])) { $got = $_POST[$prefix.$alias];
-          } elseif (isset($_GET[$prefix.$alias]))  { $got = urldecode($_GET[$prefix.$alias]); }
+          $pa = $prefix.$alias;
+          if       (array_key_exists($pa,$_POST)) { $got = $_POST[$pa];
+          } elseif (array_key_exists($pa,$_GET))  { $got = urldecode($_GET[$pa]); }
         } else {
           if (!array_key_exists($alias,$source)) continue;
           $got = $source[$alias];
@@ -138,7 +139,7 @@
         // Элементы
         if ($cor && is_array($field['elements'])) {
           if (!is_null($got)) {
-            if (!isset($field['elements'][$got])) $cor = false;
+            if (!array_key_exists($got,$field['elements'])) $cor = false;
           } else { $cor = false; }
         }
         // Итог проверок на корректность
