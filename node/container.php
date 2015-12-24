@@ -40,6 +40,7 @@
 
     protected $_eventMethod   = 3;
 
+    protected $_prefix        = '';
     protected $_events        = array();
     protected $_methods       = array();
     protected $_plugins       = array();
@@ -55,8 +56,12 @@
     protected $_cache         = null;
 
     /* CLASS:CONSTRUCT */
-    function __construct() {
+    function __construct($prefix=null) {
       $this->_cache = new xbNodeLoader($this);
+      if (!is_null($prefix)) {
+        $this->_prefix = $prefix;
+        xbNode::classPrefix($this->_prefix);
+      }
     }
 
     /* CLASS:GET */
