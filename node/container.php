@@ -19,9 +19,10 @@
    *
    * @property      int   $eventMethod
    *
-   * @property-read array $events
-   * @property-read array $method
-   * @property-read array $plugins
+   * @property-read string $prefix
+   * @property-read array  $events
+   * @property-read array  $method
+   * @property-read array  $plugins
    *
    * @property-read array $handleList
    * @property-read array $handleMap
@@ -447,6 +448,16 @@
       } else { return (!$this->error('class',"method invalid name",$n)); }
       return false;
     }
+
+    /* CLASS:METHOD
+      @name        : methodExists
+      @description : Существование метода
+
+      @param : $n | string | value | | Название функции
+
+      @param : bool
+    */
+    public function methodExists($n) { return isset($this->_methods[$n]); }
 
     /* **************** ПРОЧЕЕ **************** */
     /* CLASS:METHOD
