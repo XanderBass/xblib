@@ -332,15 +332,30 @@
         case 'clear' : return array($this->_query);
         case 'table' :
           $f = array();
+          $k = array();
           $p = '';
           foreach ($this->_fields as $alias => $v) {
             $f[] = "`$alias` ".xbDataFields::SQLType($this->owner->fields[$alias]);
             if ($this->owner->fields[$alias]['primary']) $p = $alias;
+            if (!is_null($this->owner->fields[$alias]['key']))
+              $k[$alias] = $this->owner->fields[$alias]['key'];
           }
           $_ = $this->_query." (".implode(',',$f);
+          if (is_array($this->owner->indexes))
+            foreach ($this->owner->indexes as $alias)
+              $_.= ",index (`$alias`)`";
+          if (is_array($this->owner->unique))
+            foreach ($this->owner->unique as $alias => $key)
+              $_.= ",unique key `$alias`(`".implode('`,`',$key)."`)";
           if (!empty($p)) $_.= ",primary key (`$p`)";
-          $_.= ") engine=InnoDB";
-          $_.= " insert_method=first"; // TODO
+          if (!empty($k)) {
+            foreach ($k as $alias => $key)
+              $_.= ",foreign key (`$alias`) references `[+prefix+]".$key['table']
+                .  "`(`".$key['field']."`)"
+                .  " on update ".$key['update']
+                .  " on delete ".$key['delete'];
+          }
+          $_.= ") engine=InnoDB insert_method=first"; // TODO
           return array($_);
         default: return false;
       }

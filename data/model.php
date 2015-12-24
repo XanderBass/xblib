@@ -18,6 +18,8 @@
    * @property-read array  $fields
    * @property-read array  $add
    * @property-read string $primary
+   * @property-read array  $unique
+   * @property-read array  $indexes
    * @property-read bool   $ready
    * @property-read string $error
    */
@@ -27,6 +29,7 @@
     protected $_fields  = null; // Поля
     protected $_add     = null; // Информация по дополнительным полям
     protected $_primary = null; // Первичный ключ
+    protected $_unique  = null; // Первичный ключ
     protected $_ready   = null; // Готовность
     protected $_error   = null; // Сообщение ошибки
 
@@ -49,6 +52,8 @@
         $this->_fields  = $ret['fields'];
         $this->_add     = $ret['add'];
         $this->_primary = $ret['primary'];
+        $this->_unique  = $ret['unique'];
+        $this->_indexes = $ret['indexes'];
       }
     }
 
@@ -245,8 +250,11 @@
           'field'   => '',
           'ids'     => array(),
           'aliases' => array()
-        )
+        ),
+        'unique'  => null,
+        'indexes' => null
       );
+      // Поправка полей
       foreach ($data['fields'] as $alias => $field) {
         $ret['fields'][$alias] = xbDataFields::correct($field,$alias);
         if ($ret['fields'][$alias]['primary']) $ret['primary'] = $alias;
@@ -261,6 +269,23 @@
           $fid = $ret['fields'][$alias]['id'];
           $ret['add']['ids'][$fid]       = $alias;
           $ret['add']['aliases'][$alias] = $fid;
+        }
+      }
+      // Поправка уникальных ключей
+      if (isset($data['unique'])) if (is_array($data['unique']))
+        foreach ($data['unique'] as $alias => $field) {
+          $v = is_array($field) ? $field : explode(',',$field);
+          foreach ($v as $key) if (isset($ret['fields'][$key])) {
+            if (!is_array($ret['unique'])) $ret['unique'] = array();
+            $ret['unique'][$alias][] = $key;
+          }
+        }
+      // Поправка индексов
+      if (isset($data['indexes'])) {
+        $v = is_array($data['indexes']) ? $data['indexes'] : explode(',',$data['indexes']);
+        foreach ($v as $key) if (isset($ret['fields'][$key])) {
+          if (!is_array($ret['indexes'])) $ret['indexes'] = array();
+          $ret['indexes'][] = $key;
         }
       }
       // Проверяем таблицы

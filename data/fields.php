@@ -101,7 +101,8 @@
       foreach (array(
                  'id','type',
                  'flags','length','default','elements','input',
-                 'regexp','replace','strip','access','external'
+                 'regexp','replace','strip','access',
+                 'external','key'
                ) as $k) if (!array_key_exists($k,$ret)) $ret[$k] = null;
       // Коррекция типа
       $ret['type']    = is_null($ret['type']) ? 0 : xbDataTypes::type($ret['type']);
@@ -120,6 +121,25 @@
           $q = (strpos($ret['elements'],'@: ') === 0);
           $ret['elements'] = $q ? substr($ret['elements'],3) : unserialize($ret['elements']);
         }
+      }
+      // Внешний ключ
+      if (!is_null($ret['key'])) {
+        $_ = explode('.',$ret['key']);
+        $ret['key'] = array('table' => null,'field' => null,'update' => null,'delete' => null);
+        if (count($_) == 0) $ret['key'] = null;
+        if (count($_) >  1) {
+          $ret['key']['table'] = $_[0];
+          $_ = explode(':',$_[1]);
+          $ret['key']['field'] = $_[0];
+          if (count($_) > 1) {
+            $_ = explode('/',$_[1]);
+            $ret['key']['update'] =                  empty($_[0]) ? null : $_[0];
+            $ret['key']['delete'] = count($_) > 1 ? (empty($_[1]) ? null : $_[1]) : null;
+          }
+        } else { $ret['key']['field'] = $_[0]; }
+        if (!is_null($ret['key']))
+          foreach (array('update','delete') as $k)
+            if (is_null($ret['key'][$k])) $ret['key'][$k] = 'set null';
       }
       if (is_null($ret['input'])) $ret['input'] = self::input($ret['type'],is_null($ret['elements']));
       // Дополнительные параметры
@@ -146,7 +166,7 @@
     }
 
     /* CLASS:STATIC
-      @name        : sqlType
+      @name        : SQLType
       @description : Тип поля SQL
 
       @param : $field | array | value | | Поле
