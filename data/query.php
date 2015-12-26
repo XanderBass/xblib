@@ -350,7 +350,8 @@
           if (!empty($p)) $_.= ",primary key (`$p`)";
           if (!empty($k)) {
             foreach ($k as $alias => $key)
-              $_.= ",foreign key (`$alias`) references `[+prefix+]".$key['table']
+              $_.= ",foreign key (`$alias`) references `[+prefix+]"
+                . (is_null($key['table']) ? ($this->owner->table) : $key['table'])
                 .  "`(`".$key['field']."`)"
                 .  " on update ".$key['update']
                 .  " on delete ".$key['delete'];
