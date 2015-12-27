@@ -4,7 +4,7 @@
     @component   : xbMailer
     @type        : class
     @description : Класс отправки электропочты
-    @revision    : 2015-12-16 16:24:00
+    @revision    : 2015-12-27 21:05:00
   */
 
   /* CLASS ~BEGIN */
