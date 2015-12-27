@@ -4,7 +4,7 @@
     @component   : xbCRUD
     @type        : clibrary
     @description : Библиотека для реализации логики ролей доступа
-    @revision    : 2015-12-07 12:31:00
+    @revision    : 2015-12-27 21:02:00
   */
 
   /* LIBRARY ~BEGIN */
