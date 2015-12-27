@@ -90,45 +90,6 @@
 
     /******** ОБЩИЕ ФУНКЦИИ ********/
     /* LIBRARY:FUNCTION
-      @name        : search
-      @description : Поиск элемента
-
-      @param : $type | string | value | | Тип элемента
-      @param : $name | string | value | | Имя элемента
-
-      @param : string
-    */
-    public static function search($paths,$type,$name,$lang='') {
-      $ext = 'html';
-      $DS  = DIRECTORY_SEPARATOR;
-
-      switch ($type) {
-        case 'template': $sdir = 'pages'; break;
-        case 'chunk'   : $sdir = 'chunks'; break;
-        case 'snippet' : $sdir = 'snippets'; $ext = 'php'; break;
-        default: return false;
-      }
-
-      $dname = explode('.',$name);
-      $ename = $dname[count($dname)-1];
-      unset($dname[count($dname)-1]);
-      $dname = count($dname) > 0 ? implode($DS,$dname).$DS : '';
-      $found = '';
-
-      foreach ($paths as $epath) {
-        $D = $epath.$sdir.DIRECTORY_SEPARATOR.$dname;
-        $fname = $D."$ename.$ext";
-        if (is_file($fname)) $found = $fname;
-        if ($lang != '') {
-          $fname = $D.$lang.DIRECTORY_SEPARATOR."$ename.$ext";
-          if (is_file($fname)) $found = $fname;
-        }
-      }
-
-      return $found;
-    }
-
-    /* LIBRARY:FUNCTION
       @name        : extensions
       @description : Расширения
 

@@ -37,6 +37,8 @@
     protected $_template = '';
     protected $_prefix   = 'parser';
 
+    protected $_templateExtension = 'html';
+
     /* CLASS:CONSTRUCT */
     function __construct($owner=null) { $this->_owner = $owner; }
 
@@ -165,6 +167,48 @@
         $_stime  = null;
       }
       return $O;
+    }
+
+    /* CLASS:METHOD
+      @name        : search
+      @description : Поиск элемента
+
+      @param : $type | string | value | | Тип элемента
+      @param : $name | string | value | | Имя элемента
+
+      @param : string
+    */
+    public function search($type,$name) {
+      $ext = $this->_templateExtension;
+      $DS  = DIRECTORY_SEPARATOR;
+
+      switch ($type) {
+        case 'template': $sdir = 'pages'; break;
+        case 'chunk'   : $sdir = 'chunks'; break;
+        case 'snippet' : $sdir = 'snippets'; $ext = 'php'; break;
+        default: return false;
+      }
+
+      $dname = explode('.',$name);
+      $ename = $dname[count($dname)-1];
+      unset($dname[count($dname)-1]);
+      $dname = count($dname) > 0 ? implode($DS,$dname).$DS : '';
+      $found = '';
+
+      $paths = $this->paths;
+      $lang  = $this->language;
+
+      foreach ($paths as $epath) {
+        $D = $epath.$sdir.DIRECTORY_SEPARATOR.$dname;
+        $fname = $D."$ename.$ext";
+        if (is_file($fname)) $found = $fname;
+        if ($lang != '') {
+          $fname = $D.$lang.DIRECTORY_SEPARATOR."$ename.$ext";
+          if (is_file($fname)) $found = $fname;
+        }
+      }
+
+      return $found;
     }
 
     /******** ПЕРЕОПРЕДЕЛЯЕМЫЕ МЕТОДЫ КЛАССА ********/

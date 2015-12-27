@@ -400,19 +400,6 @@
       return $RET;
     }
 
-    /* CLASS:METHOD
-      @name        : search
-      @description : Поиск элемента
-
-      @param : $type | string | value | | Тип элемента
-      @param : $name | string | value | | Имя элемента
-
-      @param : string
-    */
-    public function search($type,$key) {
-      return xbParserLibQB::search($this->paths,$type,$key,$this->language);
-    }
-
     /******** ПЕРЕОПРЕДЕЛЯЕМЫЕ МЕТОДЫ КЛАССА ********/
     /* Главный алгоритм */
     public function parseMain($v) {
