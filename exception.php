@@ -4,7 +4,7 @@
     @component   : xbException
     @type        : class
     @description : Класс исключения
-    @revision    : 2015-12-16 16:23:00
+    @revision    : 2015-12-27 21:03:00
   */
 
   /* CLASS ~BEGIN @string : Лог */
