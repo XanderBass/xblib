@@ -4,7 +4,7 @@
     @component   : xbValidator
     @type        : clibrary
     @description : Библиотека валидаторов по регулярным выражениям
-    @revision    : 2015-12-07 12:09:00
+    @revision    : 2015-12-27 21:07:00
   */
 
   /* LIBRARY ~BEGIN */
