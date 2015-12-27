@@ -4,7 +4,7 @@
     @component   : xbLib
     @type        : clibrary
     @description : Основная библиотека
-    @revision    : 2015-12-11 17:41:00
+    @revision    : 2015-12-27 21:04:00
   */
 
   /* LIBRARY ~BEGIN */
