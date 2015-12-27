@@ -4,7 +4,7 @@
     @component   : xbSession
     @type        : class
     @description : Класс сессии
-    @revision    : 2015-12-10 12:54:00
+    @revision    : 2015-12-27 21:06:00
   */
 
   /* CLASS ~BEGIN */
