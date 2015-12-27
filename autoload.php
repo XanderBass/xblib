@@ -13,7 +13,7 @@
     @component   : autoload
     @type        : autoload
     @description : Файл автоподгрузки
-    @revision    : 2015-12-16 12:23:00
+    @revision    : 2015-12-27 21:00:00
   */
 
   if (!defined("XBLIB_DEPLOY_ROOT")) define("XBLIB_DEPLOY_ROOT",'system/external/xblib');
