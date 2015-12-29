@@ -134,6 +134,7 @@
           'id'       => 0,
           'sid'      => '',
           'user'     => 0,
+          'key'      => null,
           'last'     => null,
           'ipv4'     => $this->_IPv4,
           'ipv6'     => $this->_IPv6,
@@ -251,7 +252,7 @@
     */
     public function variable($path,$value=null) {
       if (!is_null($value)) {
-        $P   = is_array($path) ? $path : explode('/',$path);
+        $P = is_array($path) ? $path : explode('/',$path);
         if (count($P) < 1) return false;
         $tmp = &$_SESSION[self::$key];
         foreach ($P as $key) {
