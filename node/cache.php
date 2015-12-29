@@ -10,21 +10,25 @@
   /* CLASS ~BEGIN */
   /**
    * Class xbNodeCache
+   * @property-read xbNodeLoader $owner
+   * @property-read bool         $ready
    *
    * @property-read string $module
    * @property-read string $name
    * @property-read array  $path
-   * @property-read string $root
    * @property-read string $fileName
    */
   class xbNodeCache {
+    protected $_owner  = null;
+    protected $_ready  = true;
     protected $_module = 'system';
     protected $_name   = 'main';
     protected $_path   = array();
 
     /* CLASS:CONSTRUCTOR */
     function __construct($owner,$v='') {
-      $this->_name = 'main';
+      $this->_owner = $owner;
+      $this->_name  = 'main';
       if ($CD = xbNode::classification(get_class($this))) {
         if (!empty($CD['module'])) $this->_module = $CD['module'];
         if (!empty($CD['name']))   $this->_name   = $CD['name'];
@@ -36,6 +40,7 @@
         unset($F[$L]);
         $this->_path = $F;
       }
+      $this->_ready = $this->owner->ready;
     }
 
     /* CLASS:GET */

@@ -10,22 +10,22 @@
   /* CLASS ~BEGIN */
   /**
    * Class xbNodeLoader
+   * @property-read bool   $ready
+   * @property-read object $owner
    * @property      bool   $new
    * @property      bool   $active
    * @property-read string $status
-   *
-   * @property-read array  $handlers
    */
   class xbNodeLoader {
     protected $_ready  = true;
     protected $_owner  = null;
-    protected $_path   = null;
     protected $_new    = false; // Флаг необходимости сохранения
     protected $_active = false; // Флаг активности кэша
 
     /* CLASS:CONSTRUCT */
     function __construct($owner=null) {
       $this->_owner = $owner;
+      if ($this->_owner instanceof xbNodeContainer) $this->_ready = $this->_owner->ready;
     }
 
     /* CLASS:GET */
@@ -79,7 +79,7 @@
       }
 
       $path = implode('/',$path);
-      return xbNode::create($module,'cache',$name,$path);
+      return xbNode::create($module,'cache',$name,$this,$path);
     }
 
     /* **************** ПУБЛИЧНЫЕ МЕТОДЫ **************** */

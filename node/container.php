@@ -17,7 +17,8 @@
   /**
    * Class xbNodeContainer
    *
-   * @property      int   $eventMethod
+   * @property      int    $eventMethod
+   * @property-read bool   $ready
    *
    * @property-read string $prefix
    * @property-read array  $events
@@ -40,6 +41,7 @@
     protected static $_errorHandler = null;
 
     protected $_eventMethod   = 3;
+    protected $_ready         = true;
 
     protected $_prefix        = '';
     protected $_events        = array();
@@ -275,9 +277,7 @@
       @param : bool
     */
     public function loadModule($module) {
-      if ($this->loadAPI($module)) {
-        return $this->loadPlugin($module);
-      }
+      if ($this->loadAPI($module)) return $this->loadPlugin($module);
       return !$this->event('ModuleNotLoaded',$module);
     }
 
