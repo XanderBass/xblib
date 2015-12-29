@@ -21,9 +21,10 @@
       @return : array
     */
     public static function roles($v=null,$r=false) {
-      if (is_null(self::$_roles)) {
-        self::$_roles = array('anonimous','authorized','notactive','blocked');
-      }
+      if (is_null(self::$_roles))
+        self::$_roles = array(
+          'anonimous','authorized','notactive','blocked'
+        );
       if (!is_null($v)) {
         $V = is_array($v) ? $v : explode(',',strval($v));
         if (!$r) {
