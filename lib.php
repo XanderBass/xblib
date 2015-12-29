@@ -544,13 +544,13 @@
   /* @function http_responce_code */
   if (!function_exists('http_response_code')) {
     // Для версий до 5.4
-    function http_response_code($code = null,$sendheader=true) {
+    function http_response_code($code=null,$sendheader=true) {
       static $_code = null;
       static $_prot = null;
 
       if (is_null($_prot))
         $_prot = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
-      if ($code !== NULL) {
+      if ($code !== null) {
         $_code = intval($code);
         $_text = xbLib::HTTPStatus($_code);
         if ($sendheader) header("$_prot $_code $_text");
