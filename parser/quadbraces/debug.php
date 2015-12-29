@@ -21,14 +21,13 @@
       $atm = array('ms' => 1000,'us' => 1000000,'ns' => 1000000000);
 
       switch ($dk) {
-        case 'memory':
         case 'time':
           $v = $this->owner->debug['time'];
           if (count($dd) > 1) if (array_key_exists($dd[1],$atm)) $v *= $atm[$dd[1]];
           $v = strval(round($v,2));
           break;
-        case 'totaltime':
-          $v = "<!-- $KP:TOTALTIME";
+        case 'parsetime':
+          $v = "<!-- $KP:PARSETIME";
           if (count($dd) > 1) if (array_key_exists($dd[1],$atm)) $v.= ' '.$dd[1];
           $v.= " -->";
           break;

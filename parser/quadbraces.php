@@ -297,7 +297,8 @@
       $K = array_keys($ret);
       $ret['type'] = 'chunk';
       if (isset($args['chunkType']))
-        if (in_array($args['chunkType'],array('chunk','string','lib'))) $ret['type'] = $args['chunkType'];
+        if (in_array($args['chunkType'],array('chunk','string','lib')))
+          $ret['type'] = $args['chunkType'];
       foreach ($K as $Key) if (isset($args[$Key]))
         if ($_ = $this->getChunk($args[$Key],$ret['type'])) $ret[$Key] = $_;
       return $ret;
@@ -415,6 +416,14 @@
 
     /* Алгоритм санитизации */
     public function parseSanitize($v) { return xbParserLibQB::sanitize($v); }
+
+    /* Алгоритм вывода бенчмарков */
+    public function parseBenchmark($v) {
+//      $KP = $this->prefix;
+      return str_replace(array(
+      ),array(
+      ),$v);
+    }
   }
   /* CLASS ~END */
 

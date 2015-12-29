@@ -163,6 +163,7 @@
       if ($this->_level == -1) {
         $this->_debug['time'] = microtime(true) - $_stime;
         $O = $this->parseSanitize($O);
+        $O = $this->parseBenchmark($O);
         $_levels = null;
         $_stime  = null;
       }
@@ -182,12 +183,9 @@
       $ext = $this->_templateExtension;
       $DS  = DIRECTORY_SEPARATOR;
 
-      switch ($type) {
-        case 'template': $sdir = 'pages'; break;
-        case 'chunk'   : $sdir = 'chunks'; break;
-        case 'snippet' : $sdir = 'snippets'; $ext = 'php'; break;
-        default: return false;
-      }
+      if (!in_array($type,array('template','chunk','snippet'))) return false;
+      $sdir = $type.'s';
+      if ($type == 'snippet') $ext = 'php';
 
       $dname = explode('.',$name);
       $ename = $dname[count($dname)-1];
@@ -217,6 +215,9 @@
 
     /* Алгоритм санитизации */
     public function parseSanitize($v) { return $v; }
+
+    /* Алгоритм санитизации */
+    public function parseBenchmark($v) { return $v; }
   }
   /* CLASS ~END */
 

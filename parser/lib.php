@@ -9,6 +9,18 @@
 
   /* LIBRARY ~BEGIN */
   class xbParser {
+    public static function create($owner=null,$v=null,$prefix='project_') {
+      static $sup = null;
+      if (is_null($sup)) $sup = array('QuadBraces');
+      $type = $sup[0];
+      $C = strtoupper($prefix."config_parser");
+      if (defined($C))           $type = constant($C);
+      if (!in_array($type,$sup)) $type = $sup[0];
+      if (in_array($v,$sup))     $type = $v;
+      $CN = 'xbParser'.$type;
+      return new $CN($owner);
+    }
+
     /******** ФУНКЦИИ ДЛЯ РАБОТЫ С СОСТАВНЫМИ КЛЮЧАМИ ********/
     /* LIBRARY:FUNCTION
       @name        : getByKey
@@ -115,7 +127,7 @@
       $_   = is_array($v) ? $v : explode(',',$v);
       foreach ($_ as $path) {
         $vv = self::path($path);
-        if (is_dir($vv)) $ret[] = $vv;
+        if (is_dir($vv)) if (!in_array($vv,$ret)) $ret[] = $vv;
       }
       return $ret;
     }
